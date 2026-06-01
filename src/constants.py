@@ -58,9 +58,18 @@ ARGUMENT_OF_PERIAPSIS_MAX: float = 3.10
 # Durante Table 2 reference radius [km]; Appendix B R_Jupiter.
 R_JUPITER_REF_KM: float = 71492.0
 
-# PJ01 osculating elements for eq. (3.5) / Figure 3 (fixed a, e; vary i, ω).
-SEMI_MAJOR_AXIS_KM: float = 1.087e6
-ECCENTRICITY: float = 0.824
+# PJ01 Keplerian size/shape from NASA PDS reference trajectory (53-day orbit):
+# https://pds-atmospheres.nmsu.edu/.../Time%20Line%20of%20Orbital%20Parameters-a%20-1-1.html
+# PJ1 perijove 1.058 Rj, apojove 113.08 Rj → a = (r_p + r_a)/2, e = (r_a - r_p)/(r_a + r_p).
+PDS_PJ1_RANGE_PERI_RJ: float = 1.058
+PDS_PJ1_RANGE_APO_RJ: float = 113.08
+SEMI_MAJOR_AXIS_KM: float = (
+    (PDS_PJ1_RANGE_PERI_RJ + PDS_PJ1_RANGE_APO_RJ) * R_JUPITER_REF_KM / 2.0
+)
+ECCENTRICITY: float = (
+    (PDS_PJ1_RANGE_APO_RJ - PDS_PJ1_RANGE_PERI_RJ)
+    / (PDS_PJ1_RANGE_APO_RJ + PDS_PJ1_RANGE_PERI_RJ)
+)
 
 KM_TO_M: float = 1000.0
 TWO_PI: float = 6.283185307179586
