@@ -645,16 +645,3 @@ def sigma_omega(
     return math.sqrt(
         variance_delta_omega(gradient, covariance or COVARIANCE_JHEP_ONE_SIGMA)
     )
-
-
-if __name__ == "__main__":
-    orbit = default_orbit()
-    field = default_gravity_field()
-    gradient = precession_gradient(orbit, field)
-    sigma = sigma_omega(orbit, field)
-
-    print("PJ01 orbit:", orbit)
-    print("d<dw>/dmu: ", f"{gradient[0]:.6e}")
-    print("d<dw>/dJ2: ", f"{gradient[1]:.6e}")
-    print("sigma_omega:", f"{sigma:.3e} rad/orbit")
-    print(f"Target (N=10): {const.SIGMA_OMEGA_TARGET:.1e}")
