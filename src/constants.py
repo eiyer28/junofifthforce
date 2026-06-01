@@ -46,6 +46,24 @@ CONFIDENCE_SIGMA_FACTOR: float = 2.0
 # Used to validate the gravity-field uncertainty pipeline, not as an input
 # once C_J is available.
 SIGMA_OMEGA_TARGET: float = 9.0e-10
+SIGMA_OMEGA_MIN: float = 7.1e-10
+SIGMA_OMEGA_MAX: float = 9.0e-10
+
+# Figure 3 contour ranges [rad] (Section 3, first–seventeenth perijoves).
+INCLINATION_MIN: float = 1.55
+INCLINATION_MAX: float = 1.75
+ARGUMENT_OF_PERIAPSIS_MIN: float = 2.80
+ARGUMENT_OF_PERIAPSIS_MAX: float = 3.10
+
+# Durante Table 2 reference radius [km]; Appendix B R_Jupiter.
+R_JUPITER_REF_KM: float = 71492.0
+
+# PJ01 osculating elements for eq. (3.5) / Figure 3 (fixed a, e; vary i, ω).
+SEMI_MAJOR_AXIS_KM: float = 1.087e6
+ECCENTRICITY: float = 0.824
+
+KM_TO_M: float = 1000.0
+TWO_PI: float = 6.283185307179586
 
 # Constants derived from paper-fixed CODATA + geometry for convenience
 EV_JOULE: float = 1.602176634e-19
