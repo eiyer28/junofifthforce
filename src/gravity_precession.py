@@ -10,18 +10,14 @@ used in eq. (3.5) is the same formula evaluated at ``J_l = 1``:
 The ``μ`` entry follows from the GR piece in eq. (3.1), which scales as ``μ²``.
 """
 
-from __future__ import annotations
-
 import math
 from dataclasses import dataclass
-from typing import Sequence
-
 from . import constants as const
 from .gravity_covariance import COVARIANCE_JHEP_ONE_SIGMA, variance_delta_omega
 
 # Durante et al. 2020 Table 2 central values (unnormalized J_l).
-MU_KM3_S2: float = 126_686_534.1
-J_CENTRAL: tuple[float, ...] = (
+MU_KM3_S2 = 126_686_534.1
+J_CENTRAL = (
     0.0,  # placeholder index 0
     14696.5735e-6,
     -0.0450e-6,
@@ -50,10 +46,10 @@ class GravityField:
     """JHEP parameter vector J = [μ, J₂, …, J_N]. μ in km³ s⁻², J_l dimensionless."""
 
     mu_km3_s2: float
-    j_coefficients: tuple[float, ...]
+    j_coefficients: tuple
 
 
-def default_orbit() -> OrbitState:
+def default_orbit():
     return OrbitState(
         semi_major_axis_km=const.SEMI_MAJOR_AXIS_KM,
         eccentricity=const.ECCENTRICITY,
@@ -62,7 +58,7 @@ def default_orbit() -> OrbitState:
     )
 
 
-def default_gravity_field(max_degree: int = const.N_HARMONICS) -> GravityField:
+def default_gravity_field(max_degree= const.N_HARMONICS):
     if max_degree < 2:
         return GravityField(mu_km3_s2=MU_KM3_S2, j_coefficients=tuple())
     return GravityField(
@@ -71,15 +67,15 @@ def default_gravity_field(max_degree: int = const.N_HARMONICS) -> GravityField:
     )
 
 
-def _e2(e: float) -> float:
+def _e2(e):
     return 1.0 - e * e
 
 
-def _es(e: float) -> float:
+def _es(e):
     return e * e
 
 
-def _csc(x: float) -> float:
+def _csc(x):
     return 1.0 / math.sin(x)
 
 
@@ -89,11 +85,11 @@ def _csc(x: float) -> float:
 
 
 def delta_omega_j2(
-    j2: float,
-    orbit: OrbitState,
+    j2,
+    orbit,
     *,
-    r_jupiter_km: float = const.R_JUPITER_REF_KM,
-) -> float:
+    r_jupiter_km= const.R_JUPITER_REF_KM,
+):
     """⟨Δω⟩_{J_2} from Appendix B (first displayed equation)."""
     a = orbit.semi_major_axis_km
     e2 = _e2(orbit.eccentricity)
@@ -109,11 +105,11 @@ def delta_omega_j2(
 
 
 def delta_omega_j3(
-    j3: float,
-    orbit: OrbitState,
+    j3,
+    orbit,
     *,
-    r_jupiter_km: float = const.R_JUPITER_REF_KM,
-) -> float:
+    r_jupiter_km= const.R_JUPITER_REF_KM,
+):
     """⟨Δω⟩_{J_3} from Appendix B."""
     a = orbit.semi_major_axis_km
     e = orbit.eccentricity
@@ -139,11 +135,11 @@ def delta_omega_j3(
 
 
 def delta_omega_j4(
-    j4: float,
-    orbit: OrbitState,
+    j4,
+    orbit,
     *,
-    r_jupiter_km: float = const.R_JUPITER_REF_KM,
-) -> float:
+    r_jupiter_km= const.R_JUPITER_REF_KM,
+):
     """⟨Δω⟩_{J_4} from Appendix B."""
     a = orbit.semi_major_axis_km
     e = orbit.eccentricity
@@ -165,11 +161,11 @@ def delta_omega_j4(
 
 
 def delta_omega_j5(
-    j5: float,
-    orbit: OrbitState,
+    j5,
+    orbit,
     *,
-    r_jupiter_km: float = const.R_JUPITER_REF_KM,
-) -> float:
+    r_jupiter_km= const.R_JUPITER_REF_KM,
+):
     """⟨Δω⟩_{J_5} from Appendix B."""
     a = orbit.semi_major_axis_km
     e = orbit.eccentricity
@@ -198,11 +194,11 @@ def delta_omega_j5(
 
 
 def delta_omega_j6(
-    j6: float,
-    orbit: OrbitState,
+    j6,
+    orbit,
     *,
-    r_jupiter_km: float = const.R_JUPITER_REF_KM,
-) -> float:
+    r_jupiter_km= const.R_JUPITER_REF_KM,
+):
     """⟨Δω⟩_{J_6} from Appendix B."""
     a = orbit.semi_major_axis_km
     e = orbit.eccentricity
@@ -239,11 +235,11 @@ def delta_omega_j6(
 
 
 def delta_omega_j7(
-    j7: float,
-    orbit: OrbitState,
+    j7,
+    orbit,
     *,
-    r_jupiter_km: float = const.R_JUPITER_REF_KM,
-) -> float:
+    r_jupiter_km= const.R_JUPITER_REF_KM,
+):
     """⟨Δω⟩_{J_7} from Appendix B (sin[i]^3 and csc[i] powers as in LaTeX)."""
     a = orbit.semi_major_axis_km
     e = orbit.eccentricity
@@ -287,11 +283,11 @@ def delta_omega_j7(
 
 
 def delta_omega_j8(
-    j8: float,
-    orbit: OrbitState,
+    j8,
+    orbit,
     *,
-    r_jupiter_km: float = const.R_JUPITER_REF_KM,
-) -> float:
+    r_jupiter_km= const.R_JUPITER_REF_KM,
+):
     """⟨Δω⟩_{J_8} from Appendix B."""
     a = orbit.semi_major_axis_km
     e = orbit.eccentricity
@@ -343,11 +339,11 @@ def delta_omega_j8(
 
 
 def delta_omega_j9(
-    j9: float,
-    orbit: OrbitState,
+    j9,
+    orbit,
     *,
-    r_jupiter_km: float = const.R_JUPITER_REF_KM,
-) -> float:
+    r_jupiter_km= const.R_JUPITER_REF_KM,
+):
     """⟨Δω⟩_{J_9} from Appendix B (sin[i]^5 and csc[i] powers as in LaTeX)."""
     a = orbit.semi_major_axis_km
     e = orbit.eccentricity
@@ -408,11 +404,11 @@ def delta_omega_j9(
 
 
 def delta_omega_j10(
-    j10: float,
-    orbit: OrbitState,
+    j10,
+    orbit,
     *,
-    r_jupiter_km: float = const.R_JUPITER_REF_KM,
-) -> float:
+    r_jupiter_km= const.R_JUPITER_REF_KM,
+):
     """⟨Δω⟩_{J_{10}} from Appendix B."""
     a = orbit.semi_major_axis_km
     e = orbit.eccentricity
@@ -478,7 +474,7 @@ def delta_omega_j10(
     return pref * poly * j10 * r_jupiter_km**10
 
 
-_APPENDIX_B: dict[int, object] = {
+_APPENDIX_B = {
     2: delta_omega_j2,
     3: delta_omega_j3,
     4: delta_omega_j4,
@@ -492,27 +488,27 @@ _APPENDIX_B: dict[int, object] = {
 
 
 def delta_omega_jl_analytic(
-    degree: int,
-    j_l: float,
-    orbit: OrbitState,
+    degree,
+    j_l,
+    orbit,
     *,
-    r_jupiter_km: float = const.R_JUPITER_REF_KM,
-) -> float:
+    r_jupiter_km= const.R_JUPITER_REF_KM,
+):
     """Dispatch to the Appendix B formula for ``⟨Δω⟩_{J_l}`` [rad orbit⁻¹]."""
     try:
         formula = _APPENDIX_B[degree]
     except KeyError as exc:
         raise ValueError(f"Appendix B precession formula not implemented for J_{degree}") from exc
-    return formula(j_l, orbit, r_jupiter_km=r_jupiter_km)  # type: ignore[operator]
+    return formula(j_l, orbit, r_jupiter_km=r_jupiter_km)
 
 
 def mean_precession_harmonics_analytic(
-    orbit: OrbitState | None = None,
-    field: GravityField | None = None,
+    orbit=None,
+    field=None,
     *,
-    max_degree: int = const.N_HARMONICS,
-    r_jupiter_km: float = const.R_JUPITER_REF_KM,
-) -> float:
+    max_degree= const.N_HARMONICS,
+    r_jupiter_km= const.R_JUPITER_REF_KM,
+):
     """Sum of Appendix B zonal-harmonic contributions at the supplied coefficients."""
     orbit = orbit or default_orbit()
     field = field or default_gravity_field(max_degree)
@@ -527,18 +523,18 @@ def mean_precession_harmonics_analytic(
 # ---------------------------------------------------------------------------
 
 
-def _radius(true_anomaly: float, orbit: OrbitState) -> float:
+def _radius(true_anomaly, orbit):
     a, e = orbit.semi_major_axis_km, orbit.eccentricity
     return a * (1.0 - e * e) / (1.0 + e * math.cos(true_anomaly))
 
 
 def _mean_precession_gr_integral(
-    orbit: OrbitState,
-    mu_km3_s2: float,
+    orbit,
+    mu_km3_s2,
     *,
-    n_steps: int = 4_096,
-    r_jupiter_km: float = const.R_JUPITER_REF_KM,
-) -> float:
+    n_steps= 4_096,
+    r_jupiter_km= const.R_JUPITER_REF_KM,
+):
     """GR-only ⟨Δω_g⟩ from eq. (3.4), with all J_l = 0 [rad orbit⁻¹]."""
     field = GravityField(mu_km3_s2=mu_km3_s2, j_coefficients=tuple())
     a, e = orbit.semi_major_axis_km, orbit.eccentricity
@@ -579,23 +575,23 @@ def _mean_precession_gr_integral(
 
 
 def gradient_jl_coefficient(
-    degree: int,
-    orbit: OrbitState | None = None,
+    degree,
+    orbit=None,
     *,
-    r_jupiter_km: float = const.R_JUPITER_REF_KM,
-) -> float:
+    r_jupiter_km= const.R_JUPITER_REF_KM,
+):
     """∂⟨Δω_g⟩/∂J_l = ⟨Δω⟩_{J_l} with J_l = 1 (Appendix B is linear in J_l)."""
     orbit = orbit or default_orbit()
     return delta_omega_jl_analytic(degree, 1.0, orbit, r_jupiter_km=r_jupiter_km)
 
 
 def gradient_wrt_mu(
-    orbit: OrbitState | None = None,
-    field: GravityField | None = None,
+    orbit=None,
+    field=None,
     *,
-    n_steps: int = 4_096,
-    r_jupiter_km: float = const.R_JUPITER_REF_KM,
-) -> float:
+    n_steps= 4_096,
+    r_jupiter_km= const.R_JUPITER_REF_KM,
+):
     """∂⟨Δω_g⟩/∂μ = 2 ⟨Δω_g⟩_GR / μ (harmonic terms independent of μ)."""
     orbit = orbit or default_orbit()
     field = field or default_gravity_field()
@@ -607,13 +603,13 @@ def gradient_wrt_mu(
 
 
 def precession_gradient(
-    orbit: OrbitState | None = None,
-    field: GravityField | None = None,
+    orbit=None,
+    field=None,
     *,
-    max_degree: int = const.N_HARMONICS,
-    n_steps: int = 4_096,
-    r_jupiter_km: float = const.R_JUPITER_REF_KM,
-) -> tuple[float, ...]:
+    max_degree= const.N_HARMONICS,
+    n_steps= 4_096,
+    r_jupiter_km= const.R_JUPITER_REF_KM,
+):
     """Gradient vector for eq. (3.5): Appendix B formulas at J_l=1, plus ∂/∂μ."""
     orbit = orbit or default_orbit()
     field = field or default_gravity_field(max_degree)
@@ -626,14 +622,14 @@ def precession_gradient(
 
 
 def sigma_omega(
-    orbit: OrbitState | None = None,
-    field: GravityField | None = None,
+    orbit=None,
+    field=None,
     *,
-    max_degree: int = const.N_HARMONICS,
-    n_steps: int = 4_096,
-    covariance: Sequence[Sequence[float]] | None = None,
-    r_jupiter_km: float = const.R_JUPITER_REF_KM,
-) -> float:
+    max_degree= const.N_HARMONICS,
+    n_steps= 4_096,
+    covariance=None,
+    r_jupiter_km= const.R_JUPITER_REF_KM,
+):
     """σ_ω from eq. (3.5) [rad orbit⁻¹]."""
     gradient = precession_gradient(
         orbit,
@@ -645,3 +641,46 @@ def sigma_omega(
     return math.sqrt(
         variance_delta_omega(gradient, covariance or COVARIANCE_JHEP_ONE_SIGMA)
     )
+
+
+if __name__ == "__main__":
+    from .gravity_covariance import PARAMETER_LABELS
+
+    orbit = default_orbit()
+    field = default_gravity_field()
+    gradient = precession_gradient(orbit, field)
+    sigma2 = variance_delta_omega(gradient)
+    sigma = math.sqrt(sigma2)
+    harmonics = mean_precession_harmonics_analytic(orbit, field)
+    gr_only = _mean_precession_gr_integral(orbit, field.mu_km3_s2)
+
+    print("gravity_precession  (JHEP eq. 3.5 execution)")
+    print()
+    print("Orbital parameters used for the analysis:")
+    print(f"  a     = {orbit.semi_major_axis_km:.3f} km")
+    print(f"  e     = {orbit.eccentricity:.6f}")
+    print(f"  i     = {orbit.inclination:.4f} rad")
+    print(f"  omega = {orbit.argument_of_periapsis:.4f} rad")
+    print(f"  R_X   = {const.R_JUPITER_REF_KM:.1f} km")
+    print()
+    print("Mean precession <dw_g> [rad/orbit]:")
+    print(f"  zonal harmonics (Appendix B) = {harmonics:.6e}")
+    print(f"  GR only (eq. 3.4 integral)     = {gr_only:.6e}")
+    print()
+    print("Gradient g = d<dw_g>/dJ  (for sigma_omega^2 = g^T C_J g):")
+    for label, value in zip(PARAMETER_LABELS, gradient):
+        if label == "GM":
+            unit = "rad orbit^-1 / (km^3 s^-2)"
+        else:
+            unit = "rad orbit^-1"
+        print(f"  {label:8s}  {value: .6e}  [{unit}]")
+    print()
+    print("Uncertainty from Durante C_J (1-sigma):")
+    print(f"  sigma_omega^2 = {sigma2:.6e}  (rad/orbit)^2")
+    print(f"  sigma_omega   = {sigma:.6e}  rad/orbit")
+    print()
+    print("Validation against Singh et al. (N=10, i=1.57, omega=3.08):")
+    print(f"  sigma_omega target  {const.SIGMA_OMEGA_TARGET:.1e} rad/orbit")
+    rel = abs(sigma - const.SIGMA_OMEGA_TARGET) / const.SIGMA_OMEGA_TARGET
+    print(f"  relative error      {rel:.1%}")
+    print()
