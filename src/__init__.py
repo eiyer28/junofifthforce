@@ -15,6 +15,11 @@ from .constants import (
     R_JUPITER,
     SIGMA_OMEGA_TARGET,
 )
+from .fifth_force_precession import (
+    alpha_upper_bound,
+    constraint_curve,
+    mean_fifth_force_precession,
+)
 from .gravity_covariance import (
     COVARIANCE_JHEP,
     COVARIANCE_JHEP_ONE_SIGMA,
@@ -26,6 +31,9 @@ from .gravity_covariance import (
 )
 
 __all__ = [
+    "alpha_upper_bound",
+    "constraint_curve",
+    "mean_fifth_force_precession",
     "ARGUMENT_OF_PERIAPSIS",
     "AU",
     "C",
