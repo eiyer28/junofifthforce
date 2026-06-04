@@ -13,10 +13,12 @@ from .gravity_precession import MU_KM3_S2, default_orbit
 from .jupiter_density import R_JUPITER_M, jupiter_density
 
 G_SI = const.G
-# ∂U/∂r from the SI volume integral is per metre; Gauss eq. (2.4) uses r in km with μ in km³/s².
-DUDR_SI_TO_KM = const.KM_TO_M
-# Reference λ for subtracting the λ→∞ (Newtonian-Yukawa) part; leaves the screened piece that vanishes at large λ.
+# Eq. (2.4) uses a, μ, and r(f) in km but ∂U/∂r from the SI volume integral (eq. 2.3) is per metre.
+# Do not rescale ∂U/∂r by KM_TO_M — that factor of 1000 inflates ⟨Δω⟩ by ~10³.
 LAMBDA_REFERENCE_INF = 1e20
+# Subtract the λ→∞ (Newtonian-Yukawa) radial derivative only for λ ≳ R_X. At smaller λ the Yukawa
+# integral is already screened; subtracting the large-λ limit spuriously blows up the small-λ edge.
+LAMBDA_REFERENCE_THRESHOLD_M = const.R_JUPITER
 
 
 def _orbit_radius_km(true_anomaly, orbit):
@@ -86,7 +88,11 @@ def dU_dR(R_m, lam_m, alpha=1.0, *, rel_step=1e-4, subtract_reference=True):
         return (u_plus - u_minus) / (2.0 * step)
 
     dudr = _dU_at(lam_m)
-    if subtract_reference and lam_m < LAMBDA_REFERENCE_INF / 10.0:
+    if (
+        subtract_reference
+        and lam_m >= LAMBDA_REFERENCE_THRESHOLD_M
+        and lam_m < LAMBDA_REFERENCE_INF / 10.0
+    ):
         dudr -= _dU_at(LAMBDA_REFERENCE_INF)
     return dudr
 
@@ -111,7 +117,7 @@ def mean_fifth_force_precession(
     p_km = a_km * (1.0 - e * e)
     h_km = math.sqrt(MU_KM3_S2 * p_km)
     df = const.TWO_PI / n_steps
-    # Eq. (2.4) with a [km], μ [km³/s²]; ∂U/∂r_km = KM_TO_M × ∂U/∂r_m from the SI integral.
+    # Eq. (2.4): a, μ in km; ∂U/∂r from eq. (2.3) in SI (per metre).
     pref_base = -math.sqrt(p_km) / (e * e * MU_KM3_S2)
     total = 0.0
 
@@ -119,11 +125,8 @@ def mean_fifth_force_precession(
         f = (step + 0.5) * df
         r_km = _orbit_radius_km(f, orbit)
         r_m = r_km * const.KM_TO_M
-        dudr_km = (
-            dU_dR(r_m, lam_m, alpha=alpha, rel_step=1e-4, subtract_reference=True)
-            * DUDR_SI_TO_KM
-        )
-        omega_dot = pref_base * dudr_km * math.cos(f)
+        dudr = dU_dR(r_m, lam_m, alpha=alpha, rel_step=1e-4, subtract_reference=True)
+        omega_dot = pref_base * dudr * math.cos(f)
         total += omega_dot * (r_km * r_km / h_km) * df
 
     return total / const.TWO_PI
