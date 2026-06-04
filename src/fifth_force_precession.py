@@ -13,11 +13,13 @@ from .gravity_precession import MU_KM3_S2, default_orbit
 from .jupiter_density import R_JUPITER_M, jupiter_density
 
 G_SI = const.G
-# Eq. (2.4) uses a, μ, and r(f) in km but ∂U/∂r from the SI volume integral (eq. 2.3) is per metre.
-# Do not rescale ∂U/∂r by KM_TO_M — that factor of 1000 inflates ⟨Δω⟩ by ~10³.
+# Jovian gravitational parameter μ = GM in SI [m^3 s^-2] (eq. 2.4 prefactor).
+MU_SI = MU_KM3_S2 * (const.KM_TO_M ** 3)
 LAMBDA_REFERENCE_INF = 1e20
-# Subtract the λ→∞ (Newtonian-Yukawa) radial derivative only for λ ≳ R_X. At smaller λ the Yukawa
-# integral is already screened; subtracting the large-λ limit spuriously blows up the small-λ edge.
+# Subtract the λ→∞ (pure 1/r) radial derivative only for λ ≳ R_X as a variance-reduction trick:
+# the 1/r² piece integrates to zero in eq. (2.5), so this leaves the genuine non-1/r² signal while
+# cancelling the volume integral's discretisation error. At smaller λ the integral is already
+# screened, and subtracting the large-λ limit spuriously blows up the small-λ edge.
 LAMBDA_REFERENCE_THRESHOLD_M = const.R_JUPITER
 
 
@@ -73,18 +75,20 @@ def specific_potential_at_R(R_m, lam_m, alpha=1.0, *, n_r=80, n_theta=48):
     return -2.0 * math.pi * total
 
 
-def dU_dR(R_m, lam_m, alpha=1.0, *, rel_step=1e-4, subtract_reference=True):
+def dU_dR(R_m, lam_m, alpha=1.0, *, rel_step=1e-4, subtract_reference=True, n_r=80, n_theta=48):
     """
-    Radial derivative dU/dR [m s^-2] for eq. (2.4).
+    Radial derivative of the specific potential ∂(U/m)/∂r [m s^-2] for eq. (2.4).
 
-    When subtract_reference is True, use ∂U/∂r|_λ − ∂U/∂r|_{λ→∞} so the signal
-  falls off at large λ (Figure 2 right panel; α_max ∝ λ² in Figure 4).
+    When subtract_reference is True, use ∂u/∂r|_λ − ∂u/∂r|_{λ→∞} so the signal
+    falls off at large λ (Figure 2 right panel; α_max ∝ λ² in Figure 4).
     """
     step = max(R_m * rel_step, 1.0)
 
     def _dU_at(lam):
-        u_plus = specific_potential_at_R(R_m + step, lam, alpha=alpha)
-        u_minus = specific_potential_at_R(max(R_m - step, step), lam, alpha=alpha)
+        u_plus = specific_potential_at_R(R_m + step, lam, alpha=alpha, n_r=n_r, n_theta=n_theta)
+        u_minus = specific_potential_at_R(
+            max(R_m - step, step), lam, alpha=alpha, n_r=n_r, n_theta=n_theta
+        )
         return (u_plus - u_minus) / (2.0 * step)
 
     dudr = _dU_at(lam_m)
@@ -106,30 +110,36 @@ def mean_fifth_force_precession(
     n_r=80,
     n_theta=48,
 ):
-    """Orbit-averaged ⟨Δω⟩ [rad orbit^-1], eqs. (2.4)–(2.5). Linear in alpha."""
-    orbit = orbit or default_orbit()
-    a_km = orbit.semi_major_axis_km
-    e = orbit.eccentricity
-    sin_i = math.sin(orbit.inclination)
-    if abs(sin_i) < 1e-15:
-        raise ValueError("inclination too close to 0 for eq. (2.4)")
+    """Orbit-averaged ⟨Δω⟩ [rad orbit^-1], eqs. (2.4)–(2.5). Linear in alpha.
 
-    p_km = a_km * (1.0 - e * e)
-    h_km = math.sqrt(MU_KM3_S2 * p_km)
+    Combining eqs. (2.4) and (2.5) with ω̇ = -√(p/μ)/e · ∂u/∂r · cos f, ḟ = h/r²,
+    and h = √(μp), the orbit-radius and angular-momentum factors collapse to a single
+    1/(e μ), giving (everything in SI):
+
+        ⟨Δω⟩ = -1/(2π e μ) ∫₀²π (∂u/∂r) r² cos f df.
+    """
+    orbit = orbit or default_orbit()
+    e = orbit.eccentricity
+
     df = const.TWO_PI / n_steps
-    # Eq. (2.4): a, μ in km; ∂U/∂r from eq. (2.3) in SI (per metre).
-    pref_base = -math.sqrt(p_km) / (e * e * MU_KM3_S2)
+    pref = -1.0 / (const.TWO_PI * e * MU_SI)
     total = 0.0
 
     for step in range(n_steps):
         f = (step + 0.5) * df
-        r_km = _orbit_radius_km(f, orbit)
-        r_m = r_km * const.KM_TO_M
-        dudr = dU_dR(r_m, lam_m, alpha=alpha, rel_step=1e-4, subtract_reference=True)
-        omega_dot = pref_base * dudr * math.cos(f)
-        total += omega_dot * (r_km * r_km / h_km) * df
+        r_m = _orbit_radius_m(f, orbit)
+        dudr = dU_dR(
+            r_m,
+            lam_m,
+            alpha=alpha,
+            rel_step=1e-4,
+            subtract_reference=True,
+            n_r=n_r,
+            n_theta=n_theta,
+        )
+        total += dudr * r_m * r_m * math.cos(f) * df
 
-    return total / const.TWO_PI
+    return pref * total
 
 
 def mean_fifth_force_precession_unit(lam_m, orbit=None, **kwargs):
