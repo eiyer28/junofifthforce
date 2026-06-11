@@ -29,14 +29,19 @@ from precession_gravity import gradient_vector
 
 
 def sigma_omega(a=C.A_KM, e=C.ECC, inc=C.INC, omega=C.OMEGA, RJ=C.R_J_KM,
-                n_max=C.N_MAX, apply_normalization=False):
+                n_max=C.N_MAX, apply_normalization=False, cov=None):
     """sigma_omega for a given orbit (a, e, inc, omega) and harmonic truncation n_max.
 
     apply_normalization=False reproduces Singh et al. (the published Fig. 4 curve);
     apply_normalization=True is the physically rigorous treatment.
+
+    cov: optional (n_max x n_max) covariance block for [GM, J2..J_{n_max}] to use
+    instead of the default Durante slice (e.g. the updated solution). Must be in the
+    same fully-normalised basis and ordering.
     """
     grad = gradient_vector(a, e, inc, omega, RJ, n_max, apply_normalization)
-    cov = covariance_slice(n_max)
+    if cov is None:
+        cov = covariance_slice(n_max)
     return np.sqrt(grad @ cov @ grad)
 
 

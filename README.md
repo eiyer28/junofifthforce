@@ -9,11 +9,32 @@ Juno's orbital precession and the Durante et al. (2020) gravity covariance matri
 
 ```bash
 pip install -r requirements.txt
-python make_figure4.py        # writes figure4_juno.png and prints validation numbers
+python make_figure4.py          # writes figure4_juno.png and prints validation numbers
+python compare_constraints.py   # writes figure4_comparison.png: Durante vs updated covariance
 ```
 
 Each module also runs standalone (`python sigma_omega.py`, `python fifth_force.py`, ...)
 and prints its own validation checks.
+
+## Updated covariance comparison (Kaspi et al. 2023)
+
+`compare_constraints.py` overlays the Durante (2020) bound against the updated covariance
+of [Kaspi et al., Nature Astronomy 7, 1463 (2023)](https://www.nature.com/articles/s41550-023-02077-8)
+("Observational evidence for cylindrically oriented zonal flows on Jupiter"; PJ37
+normal-modes solution provided by Y. Kaspi, in
+`solution_ref_GRAVtoPJ37+PJ01_normal-modes_jnCnstr-0.1mGal/`, loaded via
+`covariance.covariance_slice_new`). Both are full covariances in the same
+fully-normalised `[GM, J2..J10]` basis, so the comparison is a clean slice-and-contract;
+the old/new improvement factor is independent of any overall 1σ/3σ scaling.
+
+| quantity | Durante 2020 | Kaspi 2023 | improvement |
+|---|---|---|---|
+| `sigma_omega` | 9.33e-10 | 3.52e-10 | 2.65x |
+| strongest bound `alpha_min` | 1.20e-9 | 4.52e-10 | 2.65x |
+| optimal `lambda` | ~1.35e8 m | ~1.35e8 m | (unchanged) |
+
+The tightening is driven mainly by the low-degree terms that dominate `sigma_omega`
+(GM σ ~3.3x smaller, J2 σ ~2.2x smaller in the Kaspi solution).
 
 ## Method
 

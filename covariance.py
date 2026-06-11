@@ -22,6 +22,13 @@ DEFAULT_PATH = os.path.join(
     "context", "durante_supporting", "covariancematrix.txt",
 )
 
+# Updated solution (PJ37 normal-modes); ships names + a label-free covariance matrix
+# in the SAME fully-normalised basis as Durante.
+NEW_SOLUTION_DIR = os.path.join(
+    os.path.dirname(__file__),
+    "solution_ref_GRAVtoPJ37+PJ01_normal-modes_jnCnstr-0.1mGal",
+)
+
 
 def load_full_covariance(path=DEFAULT_PATH):
     """Return (labels, C) with C the 43x43 covariance matrix and labels its rows."""
@@ -61,6 +68,69 @@ def covariance_slice(n_max=10, path=DEFAULT_PATH):
     return C[np.ix_(idx, idx)]
 
 
+def _map_new_label(raw):
+    """Map a new-solution parameter name to the short label scheme used here.
+
+    'Gm/Jupiter'            -> 'GM'
+    'Gravity/Jupiter/J[3]'  -> 'J[3]'
+    anything else           -> the raw (stripped) string.
+    """
+    raw = raw.strip()
+    if raw == "Gm/Jupiter":
+        return "GM"
+    prefix = "Gravity/Jupiter/"
+    if raw.startswith(prefix):
+        return raw[len(prefix):]
+    return raw
+
+
+def load_new_solution(directory=NEW_SOLUTION_DIR):
+    """Load the updated solution's covariance.
+
+    The folder stores parameter names (names.txt) and a label-free NxN numeric
+    matrix (covariance.txt) separately. Returns (labels, C) with labels mapped to
+    the same short scheme as the Durante loader ('GM', 'J[2]', ...).
+    """
+    names_path = os.path.join(directory, "names.txt")
+    cov_path = os.path.join(directory, "covariance.txt")
+
+    labels = []
+    with open(names_path, "r") as fh:
+        for line in fh:
+            if line.strip():
+                labels.append(_map_new_label(line))
+
+    rows = []
+    with open(cov_path, "r") as fh:
+        for line in fh:
+            line = line.strip()
+            if not line:
+                continue
+            rows.append([float(x) for x in line.split()])
+    C = np.array(rows)
+
+    if C.shape[0] != C.shape[1]:
+        raise ValueError(f"new covariance not square: {C.shape}")
+    if C.shape[0] != len(labels):
+        raise ValueError(
+            f"new covariance size {C.shape[0]} != number of labels {len(labels)}"
+        )
+    return labels, C
+
+
+def covariance_slice_new(n_max=10, directory=NEW_SOLUTION_DIR):
+    """Return the (n_max) x (n_max) [GM, J2..J_{n_max}] block of the updated
+    solution, in the same fully-normalised basis as the Durante slice.
+
+    The full matrix carries degenerate/unconstrained entries (inertia,
+    Lense-Thirring ~1e36) that lie OUTSIDE this block, so we slice first and never
+    operate on the full 48x48.
+    """
+    labels, C = load_new_solution(directory)
+    idx = zonal_indices(labels, n_max)
+    return C[np.ix_(idx, idx)]
+
+
 if __name__ == "__main__":
     labels, C = load_full_covariance()
     print(f"matrix shape: {C.shape}")
@@ -70,3 +140,13 @@ if __name__ == "__main__":
     print(f"\n[GM, J2..J10] block shape: {sub.shape}")
     print(f"sqrt(Var[J2_normalised]) = {np.sqrt(sub[1, 1]):.3e}")
     print(f"  -> unnormalised sigma_J2 = {np.sqrt(sub[1, 1]) * np.sqrt(5):.3e}")
+
+    new_labels, new_C = load_new_solution()
+    print(f"\nnew solution matrix shape: {new_C.shape}")
+    new_sub = covariance_slice_new(10)
+    print(f"new [GM, J2..J10] block shape: {new_sub.shape}")
+    print(f"new sqrt(Var[J2_normalised]) = {np.sqrt(new_sub[1, 1]):.3e}"
+          f"  (Durante {np.sqrt(sub[1, 1]):.3e})")
+    print("diagonal sigma ratio (new/old) per [GM, J2..J10]:")
+    ratio = np.sqrt(np.diag(new_sub) / np.diag(sub))
+    print("  " + ", ".join(f"{r:.2f}" for r in ratio))

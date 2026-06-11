@@ -1,0 +1,48 @@
+Gm/Jupiter                                            
+Gravity/Jupiter/J[2]                                  
+Gravity/Jupiter/C[2][1]                               
+Gravity/Jupiter/S[2][1]                               
+Gravity/Jupiter/C[2][2]                               
+Gravity/Jupiter/S[2][2]                               
+Gravity/Jupiter/J[3]                                  
+Gravity/Jupiter/J[4]                                  
+Gravity/Jupiter/J[5]                                  
+Gravity/Jupiter/J[6]                                  
+Gravity/Jupiter/J[7]                                  
+Gravity/Jupiter/J[8]                                  
+Gravity/Jupiter/J[9]                                  
+Gravity/Jupiter/J[10]                                 
+Gravity/Jupiter/J[11]                                 
+Gravity/Jupiter/J[12]                                 
+Gravity/Jupiter/J[13]                                 
+Gravity/Jupiter/J[14]                                 
+Gravity/Jupiter/J[15]                                 
+Gravity/Jupiter/J[16]                                 
+Gravity/Jupiter/J[17]                                 
+Gravity/Jupiter/J[18]                                 
+Gravity/Jupiter/J[19]                                 
+Gravity/Jupiter/J[20]                                 
+Gravity/Jupiter/J[21]                                 
+Gravity/Jupiter/J[22]                                 
+Gravity/Jupiter/J[23]                                 
+Gravity/Jupiter/J[24]                                 
+Gravity/Jupiter/J[25]                                 
+Gravity/Jupiter/J[26]                                 
+Gravity/Jupiter/J[27]                                 
+Gravity/Jupiter/J[28]                                 
+Gravity/Jupiter/J[29]                                 
+Gravity/Jupiter/J[30]                                 
+Gravitational Tide/Jupiter/LOVE_REAL[2][2]            
+Gravitational Tide/Jupiter/LOVE_REAL[3][1]            
+Gravitational Tide/Jupiter/LOVE_REAL[3][3]            
+Gravitational Tide/Jupiter/LOVE_REAL[4][2]            
+Gravitational Tide/Jupiter/LOVE_REAL[4][4]            
+Gravity/Jupiter Mascon/GRS up/GM                      
+Gravity/Jupiter Mascon/GRS down/GM                    
+Prop Frame/Jupiter IntegFrame/EME2000/RA              
+Prop Frame/Jupiter IntegFrame/EME2000/DEC             
+Solar Pressure/Juno/SCALE                             
+Constant Inertia/Jupiter/XX                           
+Constant Inertia/Jupiter/YY                           
+Constant Inertia/Jupiter/ZZ                           
+Lense-Thirring/Jupiter/SCALE                          
