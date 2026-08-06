@@ -1,0 +1,23 @@
+# Bytecode / caches
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+
+# TeX build artifacts
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
+
+# macOS junk
+.DS_Store
+__MACOSX/
+
+# Local editor / OS
+Thumbs.db
