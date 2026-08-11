@@ -1,0 +1,32 @@
+%==============================================================================
+%  preamble.tex  --  packages and metadata shared by main.tex
+%==============================================================================
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{setspace}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{placeins} % \FloatBarrier between large result blocks
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=blue!50!black,
+  urlcolor=blue!50!black
+}
+
+\graphicspath{{figures/}}
+\onehalfspacing
+
+% Draft helpers: gray prompts that compile but stand out while writing.
+\newcommand{\writeme}[1]{%
+  \par\noindent\textcolor{gray}{\textit{[Write: #1]}}\par
+}
+\newcommand{\figref}[1]{\texttt{#1}} % reminder of which PNG to cite while drafting

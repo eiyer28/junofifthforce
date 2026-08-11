@@ -1,26 +1,30 @@
-# Project report (LaTeX)
+# Report (Overleaf-ready)
 
-Working draft of a written report on the Juno fifth-force project.
+Zip **this folder** (`report/`) and upload to Overleaf. Set the main document to `main.tex`, then press **Recompile** (pdfLaTeX).
 
-## Contents
+## Layout
 
-| File | Role |
-|---|---|
-| `report.tex` | Main narrative draft (LaTeX) |
-| `figures/` | Figures referenced by the draft |
-
-## Build
-
-```bash
-cd report
-pdflatex report.tex
-pdflatex report.tex   # second pass for TOC / refs
+```
+report/
+  main.tex                 ← Overleaf main file
+  preamble.tex
+  refs.bib
+  sections/
+    abstract.tex
+    introduction.tex
+    theory.tex
+    data.tex
+    method.tex
+    results.tex
+    discussion.tex
+    conclusions.tex
+    acknowledgements.tex
+  figures/
+  README.md
 ```
 
-Requires a TeX distribution with `amsmath`, `booktabs`, `graphicx`, and `hyperref`.
+## Writing
 
-## How to extend
+Fill gray `\writeme{...}` prompts in `sections/*.tex` (start with `results.tex`). Keep `sections/abstract.tex` unless you intentionally revise it.
 
-Edit `report.tex` as results mature. Figures are copies from the project root / poster; regenerate them with the usual scripts (`make_figure4.py`, `compare_constraints.py`, `make_sigma_omega_checks.py`, …) and re-copy into `figures/` when numbers change.
-
-Suggested next sections: formal abstract polish, density-profile systematics, recommended “final” bound under one stated normalization convention, and acknowledgements.
+Regenerate figures from the repo root scripts, then copy into `figures/` so Overleaf stays self-contained.

@@ -1,0 +1,71 @@
+%==============================================================================
+%  main.tex  --  Overleaf root file (set as Main document)
+%  Compile with pdfLaTeX (default). Run twice for TOC / refs.
+%==============================================================================
+\documentclass[11pt,a4paper]{article}
+
+\input{preamble}
+
+\title{Updating Constraints on Beyond-the-Standard-Model Theories using NASA's Juno Mission Data}
+\author{Eashan Iyer, Ash Lassonde, Praniti Singh, JiJi Fan\\
+\small Department of Physics, Brown University}
+\date{Working draft}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The orbits of celestial bodies have long served as laboratories for fundamental physics: the anomalous precession of Mercury's orbit famously provided early evidence for general relativity. Today, spacecraft offer the same opportunity with far greater precision. NASA's Juno spacecraft has orbited Jupiter since 2016 on a highly elliptical path, sweeping from just above the planet's cloud tops to great distances away, which makes its motion exceptionally sensitive to any long-range fifth force between Juno and Jupiter beyond the four known fundamental interactions. Such a force would cause Juno's orbit to precess slightly more than gravity alone predicts. Requiring that this extra precession remain within the uncertainty of Jupiter's measured gravitational field places limits on the strength of the force as a function of its range.
+
+We update our group's previous constraint using an improved determination the Jovian gravitational field, which benefits both from the many additional orbits Juno has completed and from physically motivated assumptions about Jupiter's atmospheric winds. Preliminary results demonstrate that ongoing refinements in planetary gravity measurements translate into stronger tests of physics beyond the Standard Model.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+Explain the premise of previous work by Singh, include the cartoon, that we are using the same theoretical framework with better data. 
+
+
+\section{Theoretical Framework}
+\begin{itemize}
+    \item explain which fifth force theories that we are constraining, and find sources that explain why they give a Yukawa potential and why this is a useful class of forces to constrain
+    \item Explain the reason for the gravitational harmonics and why precession is the relevant physical observable that we are tracking
+    \item Explain Praniti's derivation of the constraints  (the density model and the finite size integral)
+\end{itemize}
+
+\section{Jovian Gravitational Field Data Updates}
+\begin{itemize}
+    \item explain where the data is actually coming from and then the changes between Durante and Kaspi analysis
+    \item Explain the three concrete reasons why this data is better than the previous data
+    \item 
+\end{itemize}
+
+\section{Methodology}
+\begin{itemize}
+    \item Since we have the theoretical framework, we can explain that the interactions lead to an observable precession shift, and only some subset of possible precession shifts are consistent with the data
+    \item Explain how we can go from the data, to the covariance matrix that comes from running the fit, to eventually the bounds on the fifth force
+    \item We put both of those things into a 95 percent confidence interval to obtain the constraints
+\end{itemize}
+
+\section{Results}
+\begin{itemize}
+    \item State our results and how they are an improvement over the previous work that has been done in this area.
+    Mainly the reproduction and improvement of the bounds, the high dependence on the low degree terms, the dependence on the geometry of the orbit, and the improvement factor
+
+    Also state the structure points which include the reduction in correlation between high degree terms, as well as the diagonal/off-diagonal structural shifts in term contributions
+\end{itemize}
+
+
+
+\section{Discussion}
+Discuss the normalization, the relation to prior work that was done by this group, and the remaining limitations. 
+
+Also state the future directions of this research, which include looking at dark matter scenarios. 
+
+\section{Acknowledgments}
+
+\bibliographystyle{unsrt}
+\bibliography{refs}
+
+\end{document}
