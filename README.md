@@ -1,12 +1,14 @@
 # Juno fifth-force constraints
 
-NASA's Juno spacecraft has orbited Jupiter since 2016 on a highly elliptical path, from just above the cloud tops to large distances. That geometry makes the orbit a sensitive probe of any long-range **fifth force** between Juno and Jupiter — a Yukawa-like correction to gravity that appears in many extensions of the Standard Model.
+NASA's Juno spacecraft has orbited Jupiter since 2016 on a highly elliptical path, from just above the cloud tops to large distances. That geometry makes the orbit a sensitive probe for long-range **fifth forces** between Juno and Jupiter. We specifically consider scenarios that lead to a Yukawa-like correction to gravity. This appears in many extensions of the Standard Model.
 
-Such a force would add a small extra **precession** of Juno's argument of perijove. Gravity-field uncertainty already allows some precession, so requiring the extra drift to stay within that uncertainty limits the force's strength \(\alpha\) as a function of its range \(\lambda\).
+Such a force would add a small anomalous **precession** of Juno's argument of perijove. The uncertainty in Juno's gravitational field already allows some precession, so requiring the extra drift to stay within that uncertainty limits the force's strength \(\alpha\) as a function of its range \(\lambda\).
 
 This repository **reproduces** the Juno bound of Singh et al. ([JHEP 01 (2025) 098](https://arxiv.org/abs/2409.10616)), which used the Durante et al. (2020) gravity solution, and **updates** it with later Juno gravity data (Kaspi et al. 2023 and a re-derived high-degree covariance). The physics and the constraint formula are unchanged; what improved is the measured Jovian field.
 
 Derivations, covariance conventions, and a full discussion of limitations belong in the paper (`report/`). This README is a high-level map of the result and how to rerun it.
+
+I am grateful to Brown University and the UTRA program for supporting me in this research. 
 
 ## Results so far
 
