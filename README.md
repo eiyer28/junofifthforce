@@ -1,113 +1,95 @@
-# Juno fifth-force reproduction
+# Juno fifth-force constraints
 
-Reproduce the **black solid Juno curve of Figure 4** in Singh et al.,
-[JHEP 01 (2025) 098](https://arxiv.org/abs/2409.10616): the 95% C.L. bound on the
-fifth-force strength `|alpha|` as a function of the force range `lambda`, derived from
-Juno's orbital precession and the Durante et al. (2020) gravity covariance matrix.
+NASA's Juno spacecraft has orbited Jupiter since 2016 on a highly elliptical path, from just above the cloud tops to large distances. That geometry makes the orbit a sensitive probe of any long-range **fifth force** between Juno and Jupiter — a Yukawa-like correction to gravity that appears in many extensions of the Standard Model.
 
-## Quick start
+Such a force would add a small extra **precession** of Juno's argument of perijove. Gravity-field uncertainty already allows some precession, so requiring the extra drift to stay within that uncertainty limits the force's strength \(\alpha\) as a function of its range \(\lambda\).
+
+This repository **reproduces** the Juno bound of Singh et al. ([JHEP 01 (2025) 098](https://arxiv.org/abs/2409.10616)), which used the Durante et al. (2020) gravity solution, and **updates** it with later Juno gravity data (Kaspi et al. 2023 and a re-derived high-degree covariance). The physics and the constraint formula are unchanged; what improved is the measured Jovian field.
+
+Derivations, covariance conventions, and a full discussion of limitations belong in the paper (`report/`). This README is a high-level map of the result and how to rerun it.
+
+## Results so far
+
+All numbers below are 95% C.L. at Juno's first-orbit geometry (perijove 1), unless noted.
+
+**Reproduction.** Contracting the Durante (2020) covariance with the precession response recovers the published Juno curve:
+
+| quantity | this analysis | Singh et al. |
+|---|---|---|
+| precession uncertainty \(\sigma_\omega\) | \(9.33\times 10^{-10}\) | \(\approx 9.0\times 10^{-10}\) |
+| strongest bound \(\alpha_{\min}\) | \(1.20\times 10^{-9}\) | \(\sim 10^{-9}\) |
+| best-constrained range \(\lambda\) | \(\sim 1.3\times 10^8\,\mathrm{m}\) (\(\sim 1.9\,R_J\)) | \(\sim 10^8\,\mathrm{m}\) |
+
+**Update.** Newer gravity solutions tighten the same bound. How much depends on how the old and new covariances are compared:
+
+| comparison | \(\sigma_\omega\) (old \(\to\) new) | improvement |
+|---|---|---|
+| same-slice overlay (Durante vs Kaspi PJ37) | \(9.33\times 10^{-10}\to 3.52\times 10^{-10}\) | **2.65×** |
+| basis-consistent (Durante vs `cov_220824`) | \(2.32\times 10^{-9}\to 1.74\times 10^{-9}\) | **1.34×** |
+
+The 2.65× figure is what you get by feeding both published matrices through the paper's original contraction. The 1.34× figure matches each matrix to its verified harmonic convention before comparing. Both are useful; they answer different questions. The paper discusses which number to quote as a “final” improvement.
+
+**What actually sets the bound**
+
+- **Low-degree gravity harmonics dominate**, especially \(J_2\). High-degree zonals barely move \(\sigma_\omega\) because Juno's semi-major axis is \(\sim 57\,R_J\), so the response falls as \((R_J/a)^l\).
+- With the modern covariance, \(\sigma_\omega\) **plateaus by \(N\sim 4\)** (J2 alone is already at the percent level). The older Durante matrix keeps rising until \(N\sim 12\) because its high-degree uncertainties are larger and its neighbour-to-neighbour correlations add constructively.
+- **Orbit geometry matters modestly.** Across Juno's realised \((\omega, i)\), \(\sigma_\omega\) spans roughly \(7.1\times 10^{-10}\)–\(9.0\times 10^{-10}\); PJ01 sits near the high end and is the conservative default.
+- The **correlation structure** of the gravity solution has changed: modern matrices have weaker low-degree off-diagonals, so extra harmonics no longer pile onto the uncertainty the way they did in Durante.
+
+The peak sensitivity remains near \(\lambda\sim R_J\). Improving Jupiter's gravity field therefore lowers the whole exclusion curve without shifting where it is strongest.
+
+## How to run the analysis
+
+The intended interface is the notebook **`juno_pipeline_comparison.ipynb`**. It is self-contained: constants, the precession response, a polytropic Jupiter density, and the covariance blocks are all embedded. The only Python dependencies are NumPy and Matplotlib.
+
+### Setup
 
 ```bash
 pip install -r requirements.txt
-python make_figure4.py          # writes figure4_juno.png and prints validation numbers
-python compare_constraints.py   # writes figure4_comparison.png: Durante vs updated covariance
 ```
 
-Each module also runs standalone (`python sigma_omega.py`, `python fifth_force.py`, ...)
-and prints its own validation checks.
+Then open the notebook in Jupyter, VS Code / Cursor, or Google Colab (it was developed with Colab metadata) and **run all cells from top to bottom**. Later cells reuse functions and arrays defined earlier; skipping the first few will break the rest.
 
-## Updated covariance comparison (Kaspi et al. 2023)
+A full run takes on the order of a minute on a laptop. Some later diagnostic cells do not have cached outputs in the file — re-running those cells regenerates the plots.
 
-`compare_constraints.py` overlays the Durante (2020) bound against the updated covariance
-of [Kaspi et al., Nature Astronomy 7, 1463 (2023)](https://www.nature.com/articles/s41550-023-02077-8)
-("Observational evidence for cylindrically oriented zonal flows on Jupiter"; PJ37
-normal-modes solution provided by Y. Kaspi, in
-`solution_ref_GRAVtoPJ37+PJ01_normal-modes_jnCnstr-0.1mGal/`, loaded via
-`covariance.covariance_slice_new`). Both are full covariances in the same
-fully-normalised `[GM, J2..J10]` basis, so the comparison is a clean slice-and-contract;
-the old/new improvement factor is independent of any overall 1σ/3σ scaling.
+### What the notebook does, in order
 
-| quantity | Durante 2020 | Kaspi 2023 | improvement |
-|---|---|---|---|
-| `sigma_omega` | 9.33e-10 | 3.52e-10 | 2.65x |
-| strongest bound `alpha_min` | 1.20e-9 | 4.52e-10 | 2.65x |
-| optimal `lambda` | ~1.35e8 m | ~1.35e8 m | (unchanged) |
+Work through it as a single pipeline. You can stop early if you only need the reproduction.
 
-The tightening is driven mainly by the low-degree terms that dominate `sigma_omega`
-(GM σ ~3.3x smaller, J2 σ ~2.2x smaller in the Kaspi solution).
+1. **Orbit and constants** — Juno's semi-major axis and eccentricity from the 53.5-day period and perijove radius.
+2. **Gravity response** — how a change in each zonal harmonic \(J_l\) (plus the GR/\(GM\) term) shifts the argument of perijove.
+3. **Durante covariance \(\to \sigma_\omega\)** — slice the published gravity covariance and contract it with that response. This is the uncertainty that sets the bound.
+4. **Fifth-force drift** — Yukawa precession vs coupling \(\alpha\) and range \(\lambda\) (notebook Figure 2).
+5. **Reproduced exclusion curve** — 95% C.L. \(\alpha(\lambda)\) from Durante, matching Singh et al. Figure 4.
+6. **Kaspi overlay** — same pipeline on the PJ37 gravity solution; prints the 2.65× same-slice improvement.
+7. **Truncation in \(N\)** — \(\sigma_\omega\) vs how many harmonics are kept (Singh et al. Figure 3, right), for both matrices.
+8. **Normalization check and `cov_220824`** — verify how each covariance is stored, then recompute a basis-consistent comparison (the 1.34× factor).
+9. **Structure diagnostics** — why the modern matrix plateaus so fast (J2 dominance, diagonal vs off-diagonal budget, correlation patterns).
+10. **Orbit geometry** — \(\sigma_\omega\) in the \((\omega, i)\) plane, per-perijove values, and an improvement-factor map.
 
-## Method
+If a plot looks empty, the cell almost certainly was not executed in this session — run it (and its predecessors).
 
-The constraint requires the per-orbit precession drift induced by the fifth force not to
-exceed twice the data-inferred uncertainty of Juno's precession:
+### Optional: regenerate paper/poster figures from scripts
 
-```
-alpha_limit(lambda) = 2 * sigma_omega / |g(lambda)|,   g(lambda) = <Delta omega> / alpha
-```
+The notebook is enough to reproduce every result above. The `make_*.py` / `compare_constraints.py` scripts write PNG files used by `report/` and `poster/`:
 
-The region above the curve is excluded.
-
-```
-covariancematrix.txt ──▶ slice [GM, J2..J10] ─┐
-Appendix-B (B.1-B.9) ──▶ d<dw_g>/dJ ──────────┼─▶ sigma_omega = sqrt(grad·C·grad^T)  (eq. 3.5)
-GR term 6πμ/(a(1-e²)c²) ───────────────────────┘                          │
-Jupiter rho(r) ──▶ <Delta omega>(alpha,lambda)  (eqs. 2.3-2.5) ──▶ g(lambda)│
-                                                                            ▼
-                                          alpha_limit = 2 sigma_omega / |g|  ──▶  Figure 4
+```bash
+python make_figure4.py              # reproduced exclusion curve
+python compare_constraints.py       # Durante vs Kaspi overlay
+python make_figure2.py              # fifth-force drift
+python make_figure3_right.py        # sigma_omega vs N
+python make_sigma_omega_checks.py   # geometry and improvement-factor maps
 ```
 
-### Modules
-- `constants.py` — Jupiter/Juno parameters. `a` from Kepler's third law (53.5-day orbit),
-  `e` from the perijove radius (`r_p ≈ 1.06 R_J`); `i=1.57`, `omega=3.08` (first orbit).
-- `precession_gravity.py` — Appendix B eqs. (B.1)-(B.9), `d<Delta omega_g>/dJ_l` for
-  `l=2..10`, plus the GR `d/dmu` term; assembles the gradient vector.
-- `covariance.py` — parses the 43×43 Durante covariance, slices `[GM, J2..J10]`.
-- `sigma_omega.py` — `sigma_omega = sqrt(grad·C·grad^T)` (eq. 3.5).
-- `density_profile.py` — Jupiter `rho(r)` (default: index-1 polytrope).
-- `fifth_force.py` — Yukawa `<Delta omega>(alpha, lambda)` with the finite-size radial
-  integral (eqs. 2.3-2.5).
-- `make_figure4.py` — scans `lambda`, builds the bound, draws the figure.
+Copy updated PNGs into `report/figures/` and `poster/figures/` if you are rebuilding those documents.
 
-## Validation against the paper
+## Paper and poster
 
-| quantity | this code | paper |
-|---|---|---|
-| `sigma_omega` (i=1.57, ω=3.08, N=10) | 9.33e-10 | ≈9.0e-10 (Fig. 3) |
-| `sigma_omega` vs N | rises ~0.8e-9 → plateau ~0.93e-9 | same shape (Fig. 3 right) |
-| strongest bound `alpha_min` | 1.20e-9 | ~1e-9 (Sec. 4) |
-| optimal `lambda` | ~1.3e8 m (~1.9 R_J) | ~1e8 m ~ O(R_J) |
-| large-λ scaling | `alpha ∝ lambda^1.85` | `alpha ∝ lambda^2` |
+- **`report/`** — LaTeX write-up (Overleaf: zip the folder, set `main.tex` as the main document). This is where method, conventions, and caveats are spelled out.
+- **`poster/`** — symposium poster source.
 
-## Two subtleties worth knowing
+## References
 
-1. **Covariance normalisation.** The Durante file stores *fully-normalised* coefficients
-   (`sqrt(Var[J2])·sqrt(5) = 1.69e-9` = Durante's published `sigma_J2 = 0.0017e-6`), while
-   the Appendix-B formulas are written for the *unnormalised* `J_l`. Reproducing the paper's
-   `sigma_omega ≈ 9e-10` requires contracting the covariance directly with the
-   unnormalised-form derivatives (no `sqrt(2l+1)` conversion) — this is
-   `apply_normalization=False`, the default. The physically rigorous treatment
-   (`apply_normalization=True`) gives `sigma_omega ≈ 2.3e-9` and a ~2.5× weaker bound.
-2. **Per-orbit convention.** Eq. (B.1) reproduces the textbook *per-revolution* J2 apsidal
-   precession (no `1/(2π)`), so both `sigma_omega` and the fifth-force drift are evaluated
-   per orbit; the `1/(2π)` written in eq. (2.5) cancels out of the bound.
-
-## Data inputs (in `context/`)
-- `durante_supporting/covariancematrix.txt` — gravity-field covariance (used).
-- `durante_supporting/estimatedmangitudeanduncertainty.txt` — empirical accelerations
-  (auxiliary; not needed for the curve).
-
-### Density profile (the one external input the paper used but is not shipped here)
-Singh et al. use the **2-layer Militzer & Hubbard (2024)** density profile. That profile is
-a numerical CMS output with no closed form
-([Zenodo doi:10.5281/zenodo.10471389](https://doi.org/10.5281/zenodo.10471389)).
-This repo defaults to an analytic index-1 polytrope, which is the standard closed-form
-Jupiter approximation. The finite-size term only reshapes the **small-λ tail**
-(`lambda < R_J`); the strongest-bound region (`lambda ~ 1e8 m`) is point-mass-dominated and
-insensitive to the profile. To use the exact Militzer-Hubbard table for a precise tail, drop
-a two-column `radius density` text file into `context/` and load it:
-
-```python
-from density_profile import load_tabulated
-r, rho = load_tabulated("context/your_2layer_profile.txt")
-# then call fifth_force.g_finite_size(..., model=...) wired to that profile
-```
+- P. Singh et al., *JHEP* 01 (2025) 098, [arXiv:2409.10616](https://arxiv.org/abs/2409.10616)
+- D. Durante et al., *Geophys. Res. Lett.* **47** (2020)
+- Y. Kaspi et al., *Nat. Astron.* **7**, 1463 (2023)

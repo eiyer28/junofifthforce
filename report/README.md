@@ -1,30 +1,12 @@
-# Report (Overleaf-ready)
+# Report
 
-Zip **this folder** (`report/`) and upload to Overleaf. Set the main document to `main.tex`, then press **Recompile** (pdfLaTeX).
+Working LaTeX draft of the paper. Zip **this folder** and upload to Overleaf; set the main document to `main.tex` and compile with pdfLaTeX (run twice for the TOC and bibliography).
 
-## Layout
+| file | role |
+|---|---|
+| `main.tex` | narrative (single file) |
+| `preamble.tex` | packages and macros |
+| `refs.bib` | bibliography |
+| `figures/` | plots copied from the repo root |
 
-```
-report/
-  main.tex                 ← Overleaf main file
-  preamble.tex
-  refs.bib
-  sections/
-    abstract.tex
-    introduction.tex
-    theory.tex
-    data.tex
-    method.tex
-    results.tex
-    discussion.tex
-    conclusions.tex
-    acknowledgements.tex
-  figures/
-  README.md
-```
-
-## Writing
-
-Fill gray `\writeme{...}` prompts in `sections/*.tex` (start with `results.tex`). Keep `sections/abstract.tex` unless you intentionally revise it.
-
-Regenerate figures from the repo root scripts, then copy into `figures/` so Overleaf stays self-contained.
+Regenerate figures with the root scripts (`make_figure4.py`, `compare_constraints.py`, …), then copy the PNGs into `figures/` so Overleaf stays self-contained. Physics, usage, and a results summary live in the [project README](../README.md).
