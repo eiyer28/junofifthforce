@@ -2,7 +2,7 @@
 
 NASA’s Juno spacecraft orbits Jupiter on a highly elliptical path. A hypothetical fifth force between Juno and Jupiter would make that orbit precess anomalously relative to the standard model and known physical effects. We can put bounds on the precession for the closest point of approach using space probe data. How tightly we can bound that force depends on the precesion with which we can determine Jupiter's gravitational field. 
 
-This repository reproduces an earlier Juno bound ([Singh et al., JHEP 01 (2025) 098](https://arxiv.org/abs/2409.10616)) and then updated it with an improved gravitational field using additional atmospheric modeling techniques ([Kaspi et al., 2023](https://www.nature.com/articles/s41550-023-02077-8)).
+This repository reproduces an earlier Juno bound ([Singh et al., JHEP 01 (2025) 098](https://arxiv.org/abs/2409.10616)) and then updates it with an improved gravitational field using additional atmospheric modeling techniques ([Kaspi et al., 2023](https://www.nature.com/articles/s41550-023-02077-8)).
 
 - Physics and results: [`Juno_Mission_UTRA_Writeup.pdf`](Juno_Mission_UTRA_Writeup.pdf)
 - Code/analysis: [`juno_pipeline_comparison.ipynb`](juno_pipeline_comparison.ipynb)
