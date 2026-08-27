@@ -28,7 +28,7 @@ Then open `juno_pipeline_comparison.ipynb` and run all cells. The only Python de
 
 ## Read the write-up by topic
 
-[`Juno_Mission_UTRA_Writeup.pdf`](Juno_Mission_UTRA_Writeup.pdf) is the place for derivations, caveats, and figures. Use this map instead of repeating that material here:
+[`Juno_Mission_UTRA_Writeup.pdf`](Juno_Mission_UTRA_Writeup.pdf) is the place for derivations, caveats, and figures.
 
 | If you want… | See |
 |---|---|
